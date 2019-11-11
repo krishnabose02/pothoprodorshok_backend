@@ -48,6 +48,10 @@ client.connect(err => {
           })
     })
 
+    app.get('/', (req, res) => {
+        res.sendfile('public/index.html');
+    })
+
     app.listen('5000', () => {
         console.log("Server is up at 5000");
     })
