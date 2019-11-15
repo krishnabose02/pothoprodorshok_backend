@@ -145,7 +145,7 @@ res.send(x);
         }
       }
     }).toArray().then((x)=>{
-      if(x.length!==0){
+      if(x.length===0){
         db.collection("hazards").insertOne({"type":req.body.type, "location" : {
           "type" : "Point",
           "coordinates" : [req.body.latitude,req.body.longitude]
