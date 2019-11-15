@@ -27,15 +27,7 @@ client.connect(err => {
     });
   })
 
-  app.post('/posthazard', (req, res) => {
-    db.collection("locations").insertOne(req.body).then((element) => {
-      res.status(200).send({
-        "message": "Posted"
-      })
-    }).catch((error) => {
-      res.status(404).send(error)
-    })
-  })
+
 
   app.post('/getnearby', (req, res) => {
     db.collection("locations").find({
@@ -96,7 +88,7 @@ client.connect(err => {
       res.send(element);
     })
   })
-  db.collection("jerks").createIndex( {"location" : "2dsphere" } );
+
   app.post('/postjerk',(req,res)=>{
     db.collection("jerks").find({
       location: {
@@ -132,6 +124,53 @@ client.connect(err => {
      
     })
 
+  })
+  app.get('/getjerkdata',(req,res)=>{
+    db.collection("jerks").find({}).toArray().then((x)=>{
+res.send(x);
+    })
+  })
+  app.post('/posthazard',(req,res)=>{
+    
+    db.collection("hazards").find({
+      location: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: [req.body.latitude,req.body.longitude]
+          },
+          $maxDistance: 50,
+          $minDistance: 0
+        }
+      }
+    }).toArray().then((x)=>{
+      if(x.length!==0){
+        db.collection("hazards").insertOne({"type":req.body.type, "location" : {
+          "type" : "Point",
+          "coordinates" : [req.body.latitude,req.body.longitude]
+        },"uid":req.body.uid,"details":req.body.details,"timestamp":req.body.timestamp}).then(()=>{
+          res.send({
+            "message":"success"
+          })
+
+        }).catch(()=>{
+    
+        })
+      }
+      else{
+        res.send({
+          "message":"Already Present"
+        })
+      }
+     
+
+    })
+   
+  })
+  app.get('/gethazarddata',(req,res)=>{
+    db.collection("hazards").find({}).toArray().then((x)=>{
+res.send(x);
+    })
   })
 
   app.get('/', (req, res) => res.sendfile('public/index.html'))
