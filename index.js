@@ -130,10 +130,9 @@ client.connect(err => {
 res.send(x);
     })
   })
+
   app.post('/posthazard',(req,res)=>{
-   
-    
-    db.collection("hazards").find({
+     db.collection("hazards").find({
       location: {
         $near: {
           $geometry: {
@@ -159,6 +158,7 @@ res.send(x);
         })
       }
       else{
+      
         res.send({
           "message":"Already Present"
         })
