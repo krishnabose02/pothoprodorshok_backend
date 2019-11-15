@@ -131,6 +131,7 @@ res.send(x);
     })
   })
   app.post('/posthazard',(req,res)=>{
+   
     
     db.collection("hazards").find({
       location: {
