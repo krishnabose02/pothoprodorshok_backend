@@ -79,11 +79,12 @@ client.connect(err => {
             type: "Point",
             coordinates: [req.body.latitude,req.body.longitude]
           },
-          $maxDistance: 4,
+          $maxDistance: 10,
           $minDistance: 0
         }
       }
     }).toArray().then((element) => {
+      console.log(element);
      if(element.length===0){
       db.collection("jerks").insertOne({
         "location" : {
