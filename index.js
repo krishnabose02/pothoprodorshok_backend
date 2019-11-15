@@ -79,7 +79,7 @@ client.connect(err => {
             type: "Point",
             coordinates: [req.body.latitude,req.body.longitude]
           },
-          $maxDistance: 10,
+          $maxDistance: 100,
           $minDistance: 0
         }
       }
@@ -115,6 +115,7 @@ res.send(x);
   })
 
   app.post('/posthazard',(req,res)=>{
+    db.collection("hazards").createIndex({"location":"2dsphere"});
      db.collection("hazards").find({
       location: {
         $near: {
@@ -122,7 +123,7 @@ res.send(x);
             type: "Point",
             coordinates: [req.body.latitude,req.body.longitude]
           },
-          $maxDistance: 50,
+          $maxDistance: 100,
           $minDistance: 0
         }
       }
