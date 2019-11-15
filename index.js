@@ -56,7 +56,7 @@ client.connect(err => {
   app.post('/login', (req, res) => {
     db.collection("users").find(req.body).toArray().then((element) => {
       if(element.length!=0)
-      res.send(element);
+      res.send(element[0]);
       else
       res.status(404).send(
         {
@@ -77,6 +77,61 @@ client.connect(err => {
     }).catch((error) => {
       res.send(error);
     })
+  })
+  app.post('/getnearbypolice',(req,res)=>{
+
+
+    db.collection("locations").find({
+      location: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: req.body.coordinates
+          },
+        
+        }
+      },
+      type:"police"
+    }).toArray().then((element) => {
+      res.send(element);
+    })
+  })
+  db.collection("jerks").createIndex( {"location" : "2dsphere" } );
+  app.post('/postjerk',(req,res)=>{
+    db.collection("jerks").find({
+      location: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: [req.body.latitude,req.body.longitude]
+          },
+          $maxDistance: 4,
+          $minDistance: 0
+        }
+      }
+    }).toArray().then((element) => {
+     if(element.length===0){
+      db.collection("jerks").insertOne({
+        "location" : {
+          "type" : "Point",
+          "coordinates" : [req.body.latitude,req.body.longitude]
+        },
+        "value":req.body.value,
+        "timestamp":req.body.timestamp
+  
+       }).then(()=>{
+         res.send({
+           "message":"success"
+         })
+       })
+     }
+     else
+     res.send({
+       "message":"Already Present"
+     })
+     
+    })
+
   })
 
   app.get('/', (req, res) => res.sendfile('public/index.html'))
