@@ -21,30 +21,11 @@ client.connect(err => {
   if (err)
     console.log("error is ", err)
 
-  app.get('/getallhazards', (req, res) => {
-    db.collection("locations").find({}).toArray().then((element) => {
-      res.send(element);
-    });
-  })
+  
 
 
 
-  app.post('/getnearby', (req, res) => {
-    db.collection("locations").find({
-      location: {
-        $near: {
-          $geometry: {
-            type: "Point",
-            coordinates: req.body.coordinates
-          },
-          $maxDistance: req.body.radius,
-          $minDistance: 0
-        }
-      }
-    }).toArray().then((element) => {
-      res.send(element);
-    })
-  })
+ 
   app.post('/login', (req, res) => {
     db.collection("users").find(req.body).toArray().then((element) => {
       if(element.length!=0)
@@ -90,6 +71,7 @@ client.connect(err => {
   })
 
   app.post('/postjerk',(req,res)=>{
+    //db.collection("jerks").createIndex({"location":"2dsphere"});
     db.collection("jerks").find({
       location: {
         $near: {
