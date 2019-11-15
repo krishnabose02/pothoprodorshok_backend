@@ -71,7 +71,7 @@ client.connect(err => {
   })
 
   app.post('/postjerk',(req,res)=>{
-    //db.collection("jerks").createIndex({"location":"2dsphere"});
+    db.collection("jerks").createIndex({"location":"2dsphere"});
     db.collection("jerks").find({
       location: {
         $near: {
