@@ -79,7 +79,7 @@ client.connect(err => {
             type: "Point",
             coordinates: [req.body.latitude,req.body.longitude]
           },
-          $maxDistance: 100,
+          $maxDistance: 50,
           $minDistance: 0
         }
       }
@@ -123,7 +123,7 @@ res.send(x);
             type: "Point",
             coordinates: [req.body.latitude,req.body.longitude]
           },
-          $maxDistance: 100,
+          $maxDistance: 50,
           $minDistance: 0
         }
       }
@@ -156,6 +156,12 @@ res.send(x);
     db.collection("hazards").find({}).toArray().then((x)=>{
 res.send(x);
     })
+  })
+  app.post('/post history',(req,res)=>{
+
+  })
+  app.post('/find hazards',(req,res)=>{
+
   })
 
   app.get('/', (req, res) => res.sendfile('public/index.html'))
