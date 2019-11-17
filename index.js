@@ -388,6 +388,14 @@ var ct=c.getTime();
     })
 
   })
+app.get('/gethistorydata',(req,res)=>{
+
+  db.collection("history").find({}).toArray().then((elements)=>{
+ 
+res.send(elements);
+
+  })
+})
 
 app.post('/findhazardandscore', function (req, res, next) {
     var coordinates = req.body
