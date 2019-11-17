@@ -132,7 +132,7 @@ app.post('/postpanic',(req,res)=>{
 res.send({
   "message":"success"
 })
-  }).catch(()=>{
+  }).catch((error)=>{
     res.status(404).send({
       "message":"Failure"
     })
@@ -458,7 +458,7 @@ app.post('/findhazardandscore', function (req, res, next) {
          for(var j=0;j<alljerks.length;j++){
            var point=alljerks[j].location.coordinates;
            var pN={"x":point[0],"y":point[1]}
-           if( calcIsInsideThickLineSegment(pL1,pL2,pN,20*meter)==true)
+           if( calcIsInsideThickLineSegment(pL1,pL2,pN,40*meter)==true)
            countjerks++;
           
    
@@ -487,7 +487,7 @@ app.post('/findhazardandscore', function (req, res, next) {
        for(var j=0;j<allhistory.length;j++){
          var point=allhistory[j].location.coordinates;
          var pN={"x":point[0],"y":point[1]}
-         if( calcIsInsideThickLineSegment(pL1,pL2,pN,20*meter)==true){
+         if( calcIsInsideThickLineSegment(pL1,pL2,pN,40*meter)==true){
           if(allhistory[j].type==="Accident")
           counthistory=counthistory+10;
           else if(allhistory[j].type==="Theft")
@@ -521,7 +521,7 @@ app.post('/findhazardandscore', function (req, res, next) {
        for(var j=0;j<allhazards.length;j++){
          var point=allhazards[j].location.coordinates;
          var pN={"x":point[0],"y":point[1]}
-         if( calcIsInsideThickLineSegment(pL1,pL2,pN,20*meter)==true){
+         if( calcIsInsideThickLineSegment(pL1,pL2,pN,40*meter)==true){
        finalhazardarray.push(allhazards[j]);
          }
       
