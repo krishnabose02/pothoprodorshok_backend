@@ -22,7 +22,7 @@ client.connect(err => {
   if (err)
     console.log("error is ", err)
 
-app.get('/getnearby',(req,res)=>{
+app.post('/getnearby',(req,res)=>{
 
   db.collection("hazards").find(
     {
@@ -30,12 +30,13 @@ app.get('/getnearby',(req,res)=>{
         { $near :
            {
              $geometry: { type: "Point",  coordinates: [ req.body.latitude, req.body.longitude ] },
-             $minDistance: 1,
+          
+             $maxDistance: 100000000,
              
            }
         }
     }
- ).then((elements)=>{
+ ).toArray().then((elements)=>{
   res.send({
     "score":Math.floor(Math.random() * 100), 
     "hazards":elements
