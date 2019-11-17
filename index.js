@@ -31,7 +31,7 @@ app.post('/getnearby',(req,res)=>{
            {
              $geometry: { type: "Point",  coordinates: [ req.body.latitude, req.body.longitude ] },
           
-             $maxDistance: 100000000,
+             $maxDistance: 50000,
              
            }
         }
