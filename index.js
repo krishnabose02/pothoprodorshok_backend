@@ -24,29 +24,97 @@ client.connect(err => {
 
 app.post('/getnearby',(req,res)=>{
 
-  db.collection("hazards").find(
+  var counthistory=0;
+  var countjerks=0;
+  var hazardarray=[];
+  var hazardpromise=new Promise((resolve,reject)=>{
+    resolve(
+      db.collection("hazards").find(
+      {
+        location:
+          { $near :
+             {
+               $geometry: { type: "Point",  coordinates: [ req.body.latitude, req.body.longitude ] },
+            
+               $maxDistance: 5000,
+               
+             }
+          }
+      }
+   ).toArray().then((elements)=>{
+   hazardarray=elements;
+     
+    
+     
+  
+   }))
+  });
+  var historypromise=new Promise((resolve,reject)=>{
+
+resolve(db.collection("history").find(
+  {
+    location:
+      { $near :
+         {
+           $geometry: { type: "Point",  coordinates: [ req.body.latitude, req.body.longitude ] },
+        
+           $maxDistance: 5000,
+           
+         }
+      }
+  }
+).toArray().then((elements)=>{
+counthistory=counthistory+elements.length;
+ 
+
+ 
+
+}))
+
+  });
+  var jerkpromise=new Promise((resolve,reject)=>{
+
+resolve( 
+  db.collection("jerks").find(
     {
       location:
         { $near :
            {
              $geometry: { type: "Point",  coordinates: [ req.body.latitude, req.body.longitude ] },
           
-             $maxDistance: 50,
+             $maxDistance: 5000,
              
            }
         }
     }
- ).toArray().then((elements)=>{
-  res.send({
-    "score":Math.floor(Math.random() * 100), 
-    "hazards":elements
-
-  })
+  ).toArray().then((elements)=>{
+  countjerks=countjerks+elements.length;
    
   
    
+  
+  }))
 
- })
+  });
+  
+hazardpromise.then(()=>{
+  historypromise.then(()=>{
+jerkpromise.then(()=>{
+  res.send({
+    "score":counthistory+countjerks,
+    "hazards":hazardarray
+
+  })
+})
+
+  })
+})
+
+
+
+
+
+
 })
 
 app.post('/postpanic',(req,res)=>{
@@ -456,7 +524,7 @@ var ct=c.getTime();
 
       });
        res.send({
-         "score":Math.floor(Math.random() * 100),
+         "score":counthistory+countjerks,
          "hazards":finalhazardarray
 
        })
