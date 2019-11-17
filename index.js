@@ -177,11 +177,7 @@ app.post('/updatelocation',(req,res)=>{
     })
   })
 })
-
-
-
-
-  app.post('/login', (req, res) => {
+app.post('/login', (req, res) => {
     db.collection("users").find(req.body).toArray().then((element) => {
       if (element.length != 0)
         res.send(element[0]);
@@ -197,7 +193,7 @@ app.post('/updatelocation',(req,res)=>{
     });
 
   })
-  app.post('/postuser', (req, res) => {
+app.post('/postuser', (req, res) => {
 
     db.collection("users").insertOne(req.body).then((element) => {
       res.send(element);
@@ -206,7 +202,7 @@ app.post('/updatelocation',(req,res)=>{
       res.send(error);
     })
   })
-  app.post('/getnearbypolice', (req, res) => {
+app.post('/getnearbypolice', (req, res) => {
 
 
     db.collection("locations").find({
@@ -225,7 +221,7 @@ app.post('/updatelocation',(req,res)=>{
     })
   })
 
-  app.post('/postjerk', (req, res) => {
+app.post('/postjerk', (req, res) => {
     db.collection("jerks").createIndex({ "location": "2dsphere" });
     db.collection("jerks").find({
       location: {
@@ -263,13 +259,13 @@ app.post('/updatelocation',(req,res)=>{
     })
 
   })
-  app.get('/getjerkdata', (req, res) => {
+app.get('/getjerkdata', (req, res) => {
     db.collection("jerks").find({}).toArray().then((x) => {
       res.send(x);
     })
   })
 
-  app.post('/posthazard', (req, res) => {
+app.post('/posthazard', (req, res) => {
     db.collection("hazards").createIndex({ "location": "2dsphere" });
     db.collection("hazards").find({
       location: {
@@ -283,7 +279,23 @@ app.post('/updatelocation',(req,res)=>{
         }
       }
     }).toArray().then((x) => {
-      if (x.length === 0) {
+      var check=false;
+
+      var checkpromise=new Promise((resolve,reject)=>{
+        
+        resolve(
+        
+          x.forEach((ele)=>{
+            if(ele.type===req.body.type)
+            check=true;
+            
+          })
+        )
+
+      })
+    checkpromise.then(()=>{
+       
+      if (x.length === 0 || check==false) {
         db.collection("hazards").insertOne({
           "type": req.body.type, "location": {
             "type": "Point",
@@ -304,17 +316,19 @@ app.post('/updatelocation',(req,res)=>{
           "message": "Already Present"
         })
       }
+    })
+     
 
 
     })
 
   })
-  app.get('/gethazarddata', (req, res) => {
+app.get('/gethazarddata', (req, res) => {
     db.collection("hazards").find({},{coordinates:0}).toArray().then((x) => {
       res.send(x);
     })
   })
-  app.post('/posthistory', (req, res) => {
+app.post('/posthistory', (req, res) => {
     console.log("in history");
 
  db.collection("history").createIndex({ "location": "2dsphere" });
@@ -375,7 +389,7 @@ var ct=c.getTime();
 
   })
 
-  app.post('/findhazardandscore', function (req, res, next) {
+app.post('/findhazardandscore', function (req, res, next) {
     var coordinates = req.body
    // console.log(coordinates);
     var array = []
@@ -536,10 +550,8 @@ var ct=c.getTime();
 
    
   })
-  
+app.get('/', (req, res) => res.sendfile('public/index.html'))
 
-  app.get('/', (req, res) => res.sendfile('public/index.html'))
-
-  app.listen(PORT, () => console.log(`Listening on ${PORT}`))
+app.listen(PORT, () => console.log(`Listening on ${PORT}`))
 
 });
