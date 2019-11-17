@@ -24,26 +24,30 @@ client.connect(err => {
 
 app.get('/getnearby',(req,res)=>{
 
-//   db.collection("hazards").find(
-//     {
-//       location:
-//         { $near :
-//            {
-//              $geometry: { type: "Point",  coordinates: [ req.body.latitude, req.body.longitude ] },
-//              $minDistance: 1000,
+  db.collection("hazards").find(
+    {
+      location:
+        { $near :
+           {
+             $geometry: { type: "Point",  coordinates: [ req.body.latitude, req.body.longitude ] },
+             $minDistance: 1,
              
-//            }
-//         }
-//     }
-//  ).then((elements)=>{
-//    elements.forEach(()=>{
-     
-//    })
+           }
+        }
+    }
+ ).then((elements)=>{
+  res.send({
+    "score":Math.floor(Math.random() * 100), 
+    "hazards":elements
 
-//  })
+  })
+   
+  
+   
 
-
+ })
 })
+
 app.post('/postpanic',(req,res)=>{
   db.collection("panics").createIndex({ "location": "2dsphere" });
 
