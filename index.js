@@ -31,7 +31,7 @@ app.post('/getnearby',(req,res)=>{
            {
              $geometry: { type: "Point",  coordinates: [ req.body.latitude, req.body.longitude ] },
           
-             $maxDistance: 50000,
+             $maxDistance: 50,
              
            }
         }
@@ -456,7 +456,7 @@ var ct=c.getTime();
 
       });
        res.send({
-         "score":counthistory+countjerks,
+         "score":Math.floor(Math.random() * 100),
          "hazards":finalhazardarray
 
        })
